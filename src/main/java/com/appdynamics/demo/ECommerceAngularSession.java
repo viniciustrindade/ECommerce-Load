@@ -20,14 +20,14 @@ public abstract class ECommerceAngularSession extends SessionLoadTest {
         angularDriver.get(getScheme() + getHost() + ':' + getAngularPort() + getAngularLoginUrl());
         logger.info("Angular Logging into " + getScheme() + getHost() + ':' + getAngularPort() + getAngularLoginUrl());
         try {
-            Thread.currentThread().sleep(500);
+            Thread.currentThread().sleep(5000);
         } catch (Exception ex) {
         }
         User user = getUserInfo();
         angularDriver.findElement(By.id("username")).sendKeys(user.getEmail());
         angularDriver.findElement(By.id("password")).sendKeys(user.getPassword());
         try {
-            Thread.currentThread().sleep(500);
+            Thread.currentThread().sleep(5000);
         } catch (Exception ex) {
         }
         angularDriver.findElement(By.id("btnLogin")).click();
