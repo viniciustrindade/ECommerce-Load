@@ -1,15 +1,15 @@
-# Do not check in personal env variables
-env.sh
+.idea/**
+.gradle/**
+/**.class
+**/build/**
+**/*.iml
+**/*.iws
+**/*.ipr
 
-# Ignore downloaded App Server Agent
-AppServerAgent.zip
+# Mac
+.DS_Store
 
-# Ignore backups of run.sh/env.sh
-*.sh.*
-
-# ECommerce-Load build files
-ECommerce-Load/.gradle/
-ECommerce-Load/.idea/
-
-# Ignore jdk rpms
-jdk-*.rpm
+# Gradle
+build/
+.gradle/
+gradle/
