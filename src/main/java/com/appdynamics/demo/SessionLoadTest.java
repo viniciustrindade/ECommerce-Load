@@ -1,15 +1,13 @@
 package com.appdynamics.demo;
 
-import java.util.Map;
-
 /**
  * Created by aleftik on 6/18/14.
  */
 public abstract class SessionLoadTest extends StaticRequestLoadTest {
 
 
-    public SessionLoadTest(String host, int port, int angularPort, int callDelay) {
-        super(host, port, angularPort, callDelay);
+    public SessionLoadTest(String host, String angularHost, int port, int angularPort, int callDelay) {
+        super(host, angularHost, port, angularPort, callDelay);
     }
 
     abstract void login();

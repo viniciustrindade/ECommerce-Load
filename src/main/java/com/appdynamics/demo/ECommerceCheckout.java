@@ -15,8 +15,8 @@ public class ECommerceCheckout extends ECommerceSession {
 
     static private final Random randomGen = new Random();
 
-    public ECommerceCheckout(String host, int port, int angularPort, int callDelay) {
-        super(host, port, angularPort, callDelay);
+    public ECommerceCheckout(String host, String angularHost, int port, int angularPort, int callDelay) {
+        super(host, angularHost, port, angularPort, callDelay);
     }
 
     @Override

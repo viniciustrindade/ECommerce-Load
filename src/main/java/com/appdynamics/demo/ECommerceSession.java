@@ -10,8 +10,8 @@ import org.openqa.selenium.WebElement;
 public abstract class ECommerceSession extends SessionLoadTest {
 
 
-    public ECommerceSession(String host, int port, int angularPort, int callDelay) {
-        super(host, port, angularPort, callDelay);
+    public ECommerceSession(String host, String angularHost, int port, int angularPort, int callDelay) {
+        super(host, angularHost, port, angularPort, callDelay);
     }
 
     @Override

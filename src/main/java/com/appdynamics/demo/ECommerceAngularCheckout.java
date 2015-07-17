@@ -15,38 +15,46 @@ public class ECommerceAngularCheckout extends ECommerceAngularSession {
 
     static private final Random randomGen = new Random();
 
-    public ECommerceAngularCheckout(String host, int port, int angularPort, int callDelay) {
-        super(host, port, angularPort, callDelay);
+    public ECommerceAngularCheckout(String host, String angularHost, int port, int angularPort, int callDelay) {
+        super(host, angularHost, port, angularPort, callDelay);
     }
 
     @Override
     void performLoad() {
         WebDriver angularDriver = getDriver();
         angularDriver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
-        angularDriver.get(getScheme() + getHost() + ':' + getAngularPort() + getAngularProductsUrl());
+        angularDriver.get(getScheme() + getAngularHost() + ':' + getAngularPort() + getAngularProductsUrl());
 
         try {
             //Angular
             List<WebElement> ids = angularDriver.findElements(By.id("prodid"));
-            int angularNumBooks = randomGen.nextInt(5);
+            int angularNumBooks = randomGen.nextInt(3);
             for (int i = 0; i < angularNumBooks + 1; i++) {
                 int bookNumber = 1 + randomGen.nextInt(ids.size() - 1);
                 WebElement angularAddToCart = angularDriver.findElement(By.xpath("//div[@id='prodid' and text()=" + bookNumber + "]")).findElement(By.xpath("./following-sibling::button"));
                 logger.info("Angular - Selected book # " + bookNumber);
+                try {
+                    Thread.currentThread().sleep(500);
+                } catch (Exception ex) {
+                }
                 angularAddToCart.click();
                 logger.info("Angular - Items added to Cart");
             }
 
             WebDriver angularCheckoutDriver = getDriver();
             angularCheckoutDriver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);
-            angularCheckoutDriver.get(getScheme() + getHost() + ':' + getAngularPort() + getAngularCartUrl());
+            angularCheckoutDriver.get(getScheme() + getAngularHost() + ':' + getAngularPort() + getAngularCartUrl());
 
             WebElement angularSubmit = angularCheckoutDriver.findElement(By.id("btnCheckout"));
+            try {
+                Thread.currentThread().sleep(500);
+            } catch (Exception ex) {
+            }
             angularSubmit.click();
             logger.info("Angular - Checkout Cart");
 
         } catch (Exception ex) {
-            logger.warning("Ignored Exception");
+            logger.warning(ex.getMessage());
         }
     }
 
