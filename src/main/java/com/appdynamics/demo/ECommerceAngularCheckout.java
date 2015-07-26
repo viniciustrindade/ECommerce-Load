@@ -9,14 +9,14 @@ import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
 /**
- * Created by aleftik on 6/18/14.
+ * Created by swetha.ravichandran on 6/18/14.
  */
 public class ECommerceAngularCheckout extends ECommerceAngularSession {
 
     static private final Random randomGen = new Random();
 
-    public ECommerceAngularCheckout(String host, String angularHost, int port, int angularPort, int callDelay) {
-        super(host, angularHost, port, angularPort, callDelay);
+    public ECommerceAngularCheckout(String host, String angularHost, int port, int angularPort, int callDelay, List<User> userList) {
+        super(host, angularHost, port, angularPort, callDelay, userList);
     }
 
     @Override
@@ -24,33 +24,34 @@ public class ECommerceAngularCheckout extends ECommerceAngularSession {
         WebDriver angularDriver = getDriver();
         angularDriver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
         angularDriver.get(getScheme() + getAngularHost() + ':' + getAngularPort() + getAngularProductsUrl());
-
+        logger.info("Angular Products URL : " + getScheme() + "angular" + ':' + getAngularPort() + getAngularProductsUrl());
         try {
-            //Angular
-            List<WebElement> ids = angularDriver.findElements(By.id("prodid"));
-            int angularNumBooks = randomGen.nextInt(3);
-            for (int i = 0; i < angularNumBooks + 1; i++) {
+            //Angular - Add To Cart
+            int max = 3, min = 1;
+            int angularNumBooks = randomGen.nextInt((max - min) + 1) + min;
+            for (int i = 0; i < angularNumBooks; i++) {
+                List<WebElement> ids = angularDriver.findElements(By.id("prodid"));
                 int bookNumber = 1 + randomGen.nextInt(ids.size() - 1);
                 WebElement angularAddToCart = angularDriver.findElement(By.xpath("//div[@id='prodid' and text()=" + bookNumber + "]")).findElement(By.xpath("./following-sibling::button"));
-                logger.info("Angular - Selected book # " + bookNumber);
-                try {
-                    Thread.currentThread().sleep(500);
-                } catch (Exception ex) {
-                }
                 angularAddToCart.click();
-                logger.info("Angular - Items added to Cart");
+                logger.info("Angular - Selected book # " + bookNumber);
             }
 
             WebDriver angularCheckoutDriver = getDriver();
             angularCheckoutDriver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);
             angularCheckoutDriver.get(getScheme() + getAngularHost() + ':' + getAngularPort() + getAngularCartUrl());
+            logger.info("Angular Checkout URL : " + getScheme() + "angular" + ':' + getAngularPort() + getAngularCartUrl());
 
+            //Angular - CheckOut
             WebElement angularSubmit = angularCheckoutDriver.findElement(By.id("btnCheckout"));
+            angularSubmit.click();
+            long startTime = System.currentTimeMillis();
             try {
-                Thread.currentThread().sleep(500);
+                Thread.currentThread().sleep(180000);
             } catch (Exception ex) {
             }
-            angularSubmit.click();
+            long endTime = System.currentTimeMillis();
+            logger.info("Wait time for Angular Checkout Button Click : " + (endTime - startTime) + " milliseconds");
             logger.info("Angular - Checkout Cart");
 
         } catch (Exception ex) {
@@ -61,15 +62,15 @@ public class ECommerceAngularCheckout extends ECommerceAngularSession {
 
     @Override
     User getUserInfo() {
-        List<User> users = getUserInformation();
-        logger.info("userInfo Size : " + users.size());
+        List<User> users = getUserList();
+        logger.info("Angular - userInfo Size : " + users.size());
         if (users != null && users.size() > 0) {
             Random generator = new Random();
             int index = generator.nextInt(users.size());
             index = (index == users.size()) ? index - 1 : index;
             User user = users.get(index);
-            logger.info("User Name : " + user.getEmail());
-            logger.info("Password : " + user.getPassword());
+            logger.info("Angular - User Name : " + user.getEmail());
+            logger.info("Angular - Password : " + user.getPassword());
             return user;
         }
         return null;

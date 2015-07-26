@@ -9,6 +9,7 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.firefox.FirefoxProfile;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
@@ -24,14 +25,16 @@ public abstract class StaticRequestLoadTest implements Runnable {
     private int port = 80;
     private int angularPort = 8080;
     private String angularHost = null;
+    private List<User> userList = new ArrayList<>();
 
 
-    public StaticRequestLoadTest(String host, String angularHost, int port, int angularPort, int callDelay) {
+    public StaticRequestLoadTest(String host, String angularHost, int port, int angularPort, int callDelay, List<User> userList) {
         this.host = host;
         this.angularHost = angularHost;
         this.port = port;
         this.callDelay = callDelay;
         this.angularPort = angularPort;
+        this.userList =  userList;
     }
 
     public void init() {
@@ -115,6 +118,10 @@ public abstract class StaticRequestLoadTest implements Runnable {
         return this.angularHost;
     }
 
+    protected List<User> getUserList(){return this.userList;}
+
+    /*
+
     protected List<User> getUserInformation() {
         Client client = Client.create();
 
@@ -130,6 +137,6 @@ public abstract class StaticRequestLoadTest implements Runnable {
         return userList;
 
     }
-
+*/
     abstract String[] getUrls();
 }

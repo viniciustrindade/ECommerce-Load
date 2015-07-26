@@ -4,14 +4,16 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
+import java.util.List;
+
 /**
  * Created by aleftik on 6/18/14.
  */
 public abstract class ECommerceSession extends SessionLoadTest {
 
 
-    public ECommerceSession(String host, String angularHost, int port, int angularPort, int callDelay) {
-        super(host, angularHost, port, angularPort, callDelay);
+    public ECommerceSession(String host, String angularHost, int port, int angularPort, int callDelay, List<User> userList) {
+        super(host, angularHost, port, angularPort, callDelay,userList);
     }
 
     @Override

@@ -15,8 +15,8 @@ public class ECommerceCheckout extends ECommerceSession {
 
     static private final Random randomGen = new Random();
 
-    public ECommerceCheckout(String host, String angularHost, int port, int angularPort, int callDelay) {
-        super(host, angularHost, port, angularPort, callDelay);
+    public ECommerceCheckout(String host, String angularHost, int port, int angularPort, int callDelay, List<User> userList) {
+        super(host, angularHost, port, angularPort, callDelay,userList);
     }
 
     @Override
@@ -54,7 +54,7 @@ public class ECommerceCheckout extends ECommerceSession {
 
     @Override
     User getUserInfo() {
-        List<User> users = getUserInformation();
+        List<User> users = getUserList();
         logger.info("userInfo Size : " + users.size());
         if (users != null && users.size() > 0) {
             Random generator = new Random();

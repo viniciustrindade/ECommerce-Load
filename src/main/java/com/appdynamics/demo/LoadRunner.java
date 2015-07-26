@@ -1,5 +1,12 @@
 package com.appdynamics.demo;
 
+import com.google.common.reflect.TypeToken;
+import com.google.gson.Gson;
+import com.sun.jersey.api.client.Client;
+import com.sun.jersey.api.client.WebResource;
+
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -16,6 +23,7 @@ public class LoadRunner {
     private static int angularPort;
     private static String host = "pm-demo.appdynamics.com";
     private static String angularHost = "angular";
+    private static List<User> userList = new ArrayList<>();
 
     ScheduledExecutorService pool;
 
@@ -30,8 +38,8 @@ public class LoadRunner {
     private void run() {
         while (true) {
             for (int i = 0; i < numOfUsers; i++) {
-                pool.schedule(new ECommerceCheckout(host, angularHost, port, angularPort, waitTime), rampUpTime, TimeUnit.MILLISECONDS);
-                pool.schedule(new ECommerceAngularCheckout(host, angularHost, port, angularPort, waitTime), rampUpTime, TimeUnit.MILLISECONDS);
+                //pool.schedule(new ECommerceCheckout(host, angularHost, port, angularPort, waitTime,userList), rampUpTime, TimeUnit.MILLISECONDS);
+                pool.schedule(new ECommerceAngularCheckout(host, angularHost, port, angularPort, waitTime,userList), rampUpTime, TimeUnit.MILLISECONDS);
             }
             sleep();
         }
@@ -48,9 +56,26 @@ public class LoadRunner {
 
     public static void main(String[] args) {
         parseArgs(args);
+        userList = getUserInformation();
         LoadRunner runner = new LoadRunner();
         runner.init();
         runner.run();
+    }
+
+    private static List<User> getUserInformation() {
+        Client client = Client.create();
+
+        WebResource webResource = client
+                .resource("http://" + host + ":" +port + "/appdynamicspilot/rest/json/user/all");
+
+        String response = webResource.accept("application/json")
+                .get(String.class);
+        Gson gson = new Gson();
+        TypeToken<List<User>> token = new TypeToken<List<User>>() {
+        };
+        List<User> userList = gson.fromJson(response, token.getType());
+        return userList;
+
     }
 
 
