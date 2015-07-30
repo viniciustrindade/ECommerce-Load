@@ -47,7 +47,7 @@ public class ECommerceAngularCheckout extends ECommerceAngularSession {
             angularSubmit.click();
             long startTime = System.currentTimeMillis();
             try {
-                Thread.currentThread().sleep(180000);
+                Thread.currentThread().sleep(300000);
             } catch (Exception ex) {
             }
             long endTime = System.currentTimeMillis();
