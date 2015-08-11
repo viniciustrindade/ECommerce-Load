@@ -1,10 +1,6 @@
 package com.appdynamics.demo;
 
 
-import com.google.common.reflect.TypeToken;
-import com.google.gson.Gson;
-import com.sun.jersey.api.client.Client;
-import com.sun.jersey.api.client.WebResource;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.firefox.FirefoxProfile;
@@ -34,7 +30,7 @@ public abstract class StaticRequestLoadTest implements Runnable {
         this.port = port;
         this.callDelay = callDelay;
         this.angularPort = angularPort;
-        this.userList =  userList;
+        this.userList = userList;
     }
 
     public void init() {
@@ -118,25 +114,9 @@ public abstract class StaticRequestLoadTest implements Runnable {
         return this.angularHost;
     }
 
-    protected List<User> getUserList(){return this.userList;}
-
-    /*
-
-    protected List<User> getUserInformation() {
-        Client client = Client.create();
-
-        WebResource webResource = client
-                .resource("http://" + getHost() + ":" + getPort() + "/appdynamicspilot/rest/json/user/all");
-
-        String response = webResource.accept("application/json")
-                .get(String.class);
-        Gson gson = new Gson();
-        TypeToken<List<User>> token = new TypeToken<List<User>>() {
-        };
-        List<User> userList = gson.fromJson(response, token.getType());
-        return userList;
-
+    protected List<User> getUserList() {
+        return this.userList;
     }
-*/
+
     abstract String[] getUrls();
 }

@@ -2,9 +2,12 @@ package com.appdynamics.demo;
 
 import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
-import com.sun.jersey.api.client.Client;
-import com.sun.jersey.api.client.WebResource;
 
+import javax.ws.rs.client.Client;
+import javax.ws.rs.client.ClientBuilder;
+import javax.ws.rs.client.WebTarget;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.UriBuilder;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Executors;
@@ -12,7 +15,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 /**
- * Hello world!
+ * Load-Gen for jsp, Angular and faultInjection Framework
  */
 public class LoadRunner {
     private static int numOfUsers;
@@ -38,8 +41,10 @@ public class LoadRunner {
     private void run() {
         while (true) {
             for (int i = 0; i < numOfUsers; i++) {
-                pool.schedule(new ECommerceCheckout(host, angularHost, port, angularPort, waitTime,userList), rampUpTime, TimeUnit.MILLISECONDS);
-                pool.schedule(new ECommerceAngularCheckout(host, angularHost, port, angularPort, waitTime,userList), rampUpTime, TimeUnit.MILLISECONDS);
+                pool.schedule(new ECommerceCheckout(host, angularHost, port, angularPort, waitTime, userList), rampUpTime, TimeUnit.MILLISECONDS);
+                pool.schedule(new ECommerceAngularCheckout(host, angularHost, port, angularPort, waitTime, userList), rampUpTime, TimeUnit.MILLISECONDS);
+                ECommerceFaultInjection eCommerceFaultInjection = new ECommerceFaultInjection();
+                eCommerceFaultInjection.checkAndInjectSavedFaults(host, port, userList);
             }
             sleep();
         }
@@ -63,13 +68,10 @@ public class LoadRunner {
     }
 
     private static List<User> getUserInformation() {
-        Client client = Client.create();
-
-        WebResource webResource = client
-                .resource("http://" + host + ":" +port + "/appdynamicspilot/rest/json/user/all");
-
-        String response = webResource.accept("application/json")
-                .get(String.class);
+        Client client = ClientBuilder.newClient();
+        WebTarget webTarget =
+                client.target(UriBuilder.fromUri("http://" + host + ":" + port + "/appdynamicspilot/rest/json/user/all").build());
+        String response = webTarget.request().accept(MediaType.APPLICATION_JSON).get(String.class);
         Gson gson = new Gson();
         TypeToken<List<User>> token = new TypeToken<List<User>>() {
         };

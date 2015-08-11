@@ -45,13 +45,10 @@ public class ECommerceAngularCheckout extends ECommerceAngularSession {
             //Angular - CheckOut
             WebElement angularSubmit = angularCheckoutDriver.findElement(By.id("btnCheckout"));
             angularSubmit.click();
-            long startTime = System.currentTimeMillis();
             try {
-                Thread.currentThread().sleep(300000);
+                Thread.currentThread().sleep(500);
             } catch (Exception ex) {
             }
-            long endTime = System.currentTimeMillis();
-            logger.info("Wait time for Angular Checkout Button Click : " + (endTime - startTime) + " milliseconds");
             logger.info("Angular - Checkout Cart");
 
         } catch (Exception ex) {
