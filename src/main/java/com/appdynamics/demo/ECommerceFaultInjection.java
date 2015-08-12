@@ -3,10 +3,8 @@ package com.appdynamics.demo;
 import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
 
-import javax.ws.rs.client.Client;
-import javax.ws.rs.client.ClientBuilder;
-import javax.ws.rs.client.InvocationCallback;
-import javax.ws.rs.client.WebTarget;
+import javax.ws.rs.client.*;
+import javax.ws.rs.core.GenericEntity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.UriBuilder;
 import java.net.URI;
@@ -34,28 +32,36 @@ public class ECommerceFaultInjection {
             WebTarget webTarget =
                     client.target(UriBuilder.fromUri("http://" + host + ":" + port + "/appdynamicspilot/rest/json/fault/getfaults").build());
             String response = webTarget.request().header("username", user.getEmail()).accept(MediaType.APPLICATION_JSON).get(String.class);
+            try {
+                Thread.currentThread().sleep(6000);
+            } catch (Exception ex) {
+                logger.warning(ex.getMessage());
+            }
             Gson gson = new Gson();
             TypeToken<List<Fault>> token = new TypeToken<List<Fault>>() {
             };
             List<Fault> faultList = gson.fromJson(response, token.getType());
+
             if (faultList != null && faultList.size() > 0) {
 
                 //Make Asynchronous calls to inject faults ( to avoid 503 error)
                 final URI baseUri = URI.create("http://" + host + ":" + port + "/appdynamicspilot/rest/");
                 Client client = ClientBuilder.newClient();
                 webTarget = client.target(baseUri);
-                final Future<String> entityFuture = webTarget.path("json/fault/injectsavedfaults").request(MediaType.TEXT_PLAIN).header("username", user.getEmail()).async().get(new InvocationCallback<String>() {
-                    @Override
-                    public void completed(String response) {
-                        System.out.println("Response entity '" + response + "' received.");
-                    }
+                final Future<String> entityFuture =
+                        webTarget.path("json/fault/injectfaults").request(MediaType.TEXT_PLAIN).async().post(Entity.entity(new GenericEntity<List<Fault>>(faultList) {
+                        }, MediaType.APPLICATION_JSON), new InvocationCallback<String>() {
+                            @Override
+                            public void completed(String response) {
+                                logger.info(response);
+                            }
 
-                    @Override
-                    public void failed(Throwable throwable) {
-                        System.out.println("Invocation failed.");
-                        throwable.printStackTrace();
-                    }
-                });
+                            @Override
+                            public void failed(Throwable throwable) {
+                                logger.warning("Invocation failed.");
+                                logger.warning(throwable.getMessage());
+                            }
+                        });
                 long startTime = System.currentTimeMillis();
                 try {
                     Thread.currentThread().sleep(360000);
@@ -64,7 +70,7 @@ public class ECommerceFaultInjection {
                 }
                 long endTime = System.currentTimeMillis();
                 logger.info("Wait time for injecting faults : " + (endTime - startTime) + " milliseconds");
-                System.out.println(entityFuture.get());
+                logger.info(entityFuture.get());
             } else {
                 logger.info("Empty Faults");
             }
