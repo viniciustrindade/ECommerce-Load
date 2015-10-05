@@ -1,17 +1,21 @@
 package com.appdynamics.demo;
 
+import java.util.List;
+
 /**
  * Created by aleftik on 6/18/14.
  */
 public abstract class SessionLoadTest extends StaticRequestLoadTest {
 
 
-     public SessionLoadTest(String host, int port, int callDelay) {
-         super(host, port, callDelay);
-     }
+    public SessionLoadTest(String host, String angularHost, int port, int angularPort, int callDelay, List<User> userList) {
+        super(host, angularHost, port, angularPort, callDelay,userList);
+    }
 
     abstract void login();
+
     abstract void logout();
+
     abstract void performLoad();
 
     @Override
@@ -27,7 +31,7 @@ public abstract class SessionLoadTest extends StaticRequestLoadTest {
         }
     }
 
-    public String [] getUrls() {
+    public String[] getUrls() {
         return null;
     }
 }

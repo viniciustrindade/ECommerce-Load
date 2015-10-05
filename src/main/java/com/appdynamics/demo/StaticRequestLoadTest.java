@@ -1,12 +1,13 @@
 package com.appdynamics.demo;
 
-import org.openqa.selenium.OutputType;
+
 import org.openqa.selenium.WebDriver;
-import java.util.concurrent.TimeUnit;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.firefox.FirefoxProfile;
 
-import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 
 /**
@@ -18,12 +19,18 @@ public abstract class StaticRequestLoadTest implements Runnable {
     private int callDelay = 0;
     private WebDriver driver;
     private int port = 80;
+    private int angularPort = 8080;
+    private String angularHost = null;
+    private List<User> userList = new ArrayList<>();
 
 
-    public StaticRequestLoadTest(String host, int port, int callDelay) {
+    public StaticRequestLoadTest(String host, String angularHost, int port, int angularPort, int callDelay, List<User> userList) {
         this.host = host;
+        this.angularHost = angularHost;
         this.port = port;
         this.callDelay = callDelay;
+        this.angularPort = angularPort;
+        this.userList = userList;
     }
 
     public void init() {
@@ -50,7 +57,7 @@ public abstract class StaticRequestLoadTest implements Runnable {
     }
 
     protected void executeTest() {
-        for (int i=0; i < getUrls().length; i++) {
+        for (int i = 0; i < getUrls().length; i++) {
             fetchUrl(getUrls()[i]);
             sleep();
         }
@@ -66,10 +73,12 @@ public abstract class StaticRequestLoadTest implements Runnable {
 
     private void fetchUrl(String uri) {
         if (driver != null) {
-            String url = "http://"+ host+uri;
+            String url = "http://" + host + uri;
             logger.info("fetching :" + url);
+            System.out.println("fetching :" + url);
             driver.get(url);
         } else {
+            System.out.println("*** Web driver is null nothing to fetch ***");
             logger.info("*** Web driver is null nothing to fetch ***");
         }
 
@@ -97,5 +106,17 @@ public abstract class StaticRequestLoadTest implements Runnable {
         return this.port;
     }
 
-    abstract String [] getUrls();
+    protected int getAngularPort() {
+        return this.angularPort;
+    }
+
+    protected String getAngularHost() {
+        return this.angularHost;
+    }
+
+    protected List<User> getUserList() {
+        return this.userList;
+    }
+
+    abstract String[] getUrls();
 }
