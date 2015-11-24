@@ -45,7 +45,13 @@ public class ECommerceCheckout extends ECommerceSession {
             WebElement submit = driver.findElement(By.id("ViewCart_submitValue"));
             submit.click();
             logger.info("Checkout Cart");
+            if (driver.findElement(By.tagName("body")).getText().contains("Order ID(s) for your order(s)")) {
+                logger.info("Checkout id was present");
+            } else {
+                logger.info("Missing checkout  id");
+            }
 
+            Thread.currentThread().sleep(1000);
         } catch (Exception ex) {
             logger.warning("Ignored Exception");
         }

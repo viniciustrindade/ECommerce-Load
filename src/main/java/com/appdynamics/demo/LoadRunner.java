@@ -26,6 +26,7 @@ public class LoadRunner {
     private static int angularPort;
     private static String host = "pm-demo.appdynamics.com";
     private static String angularHost = "angular";
+    private static String loadTestType = "s";
     private static List<User> userList = new ArrayList<>();
 
     ScheduledExecutorService pool;
@@ -41,8 +42,14 @@ public class LoadRunner {
     private void run() {
         while (true) {
             for (int i = 0; i < numOfUsers; i++) {
-                pool.schedule(new ECommerceCheckout(host, angularHost, port, angularPort, waitTime, userList), rampUpTime, TimeUnit.MILLISECONDS);
-                pool.schedule(new ECommerceAngularCheckout(host, angularHost, port, angularPort, waitTime, userList), rampUpTime, TimeUnit.MILLISECONDS);
+                if (loadTestType.equals("b")) {
+                    pool.schedule(new ECommerceCheckout(host, angularHost, port, angularPort, waitTime, userList), rampUpTime, TimeUnit.MILLISECONDS);
+                    pool.schedule(new ECommerceAngularCheckout(host, angularHost, port, angularPort, waitTime, userList), rampUpTime, TimeUnit.MILLISECONDS);
+                } else if (loadTestType.equals("a")) {
+                    pool.schedule(new ECommerceAngularCheckout(host, angularHost, port, angularPort, waitTime, userList), rampUpTime, TimeUnit.MILLISECONDS);
+                } else if (loadTestType.equals("s")) {
+                    pool.schedule(new ECommerceCheckout(host, angularHost, port, angularPort, waitTime, userList), rampUpTime, TimeUnit.MILLISECONDS);
+                }
                 ECommerceFaultInjection eCommerceFaultInjection = new ECommerceFaultInjection();
                 eCommerceFaultInjection.checkAndInjectSavedFaults(host, port, userList);
             }
@@ -95,6 +102,10 @@ public class LoadRunner {
 
         if (args.length == 8) {
             waitTime = Integer.parseInt(args[7]);
+        }
+
+        if (args.length == 9) {
+           loadTestType = args[8];
         }
 
     }
