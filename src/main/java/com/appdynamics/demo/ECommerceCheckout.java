@@ -51,7 +51,7 @@ public class ECommerceCheckout extends ECommerceSession {
                 logger.info("Missing checkout  id");
             }
 
-            Thread.currentThread().sleep(1000);
+            Thread.currentThread().sleep(2000);
         } catch (Exception ex) {
             logger.warning("Ignored Exception");
         }
