@@ -42,9 +42,9 @@ public class LoadRunner {
         while (true) {
             for (int i = 0; i < numOfUsers; i++) {
                 pool.schedule(new ECommerceCheckout(host, angularHost, port, angularPort, waitTime, userList), rampUpTime, TimeUnit.MILLISECONDS);
-                pool.schedule(new ECommerceAngularCheckout(host, angularHost, port, angularPort, waitTime, userList), rampUpTime, TimeUnit.MILLISECONDS);
-                ECommerceFaultInjection eCommerceFaultInjection = new ECommerceFaultInjection();
-                eCommerceFaultInjection.checkAndInjectSavedFaults(host, port, userList);
+                // pool.schedule(new ECommerceAngularCheckout(host, angularHost, port, angularPort, waitTime, userList), rampUpTime, TimeUnit.MILLISECONDS);
+                // ECommerceFaultInjection eCommerceFaultInjection = new ECommerceFaultInjection();
+                // eCommerceFaultInjection.checkAndInjectSavedFaults(host, port, userList);
             }
             sleep();
         }
